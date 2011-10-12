@@ -18,18 +18,20 @@
 #--------------------------------------------------------------------------
 
 from random import choice, seed
-from numpy import sqrt
+from numpy import sqrt, uint64, int64, array
+
+tp = int64
 
 #--------------------------------------------------------------------------
 # SETTINGS
 #--------------------------------------------------------------------------
 
-def encrypt(msg, priv_key):
-	return pow(msg, priv_key[1], priv_key[0])
+def encrypt(msg, publ_key):
+	return pow(msg, publ_key[1], publ_key[0])
 
 
-def decrypt(msg, pub_key):
-	return pow(msg, pub_key[1], pub_key[0])
+def decrypt(msg, prvt_key):
+	return pow(msg, prvt_key[1], prvt_key[0])
 
 
 def encode(plain_word):
@@ -66,28 +68,28 @@ def gen_key(rnd_init, max):
 	totient = (p - 1) * (q - 1)
 	
 	while True:
-		e = choice(primes[0:100]) #choose one of the first 100 primes, should be sufficant
+		e = choice(primes[10:min(100, max)]) #choose one of the first 100 primes, should be sufficant
 		#e = 23
-		if e<totient and ggt(e,totient)==1:
+		k, d = bizout(totient, e)
+		if e < totient and ggt(e,totient) == 1 and d > 0:
 			break
 	
-	k, d = bizout(totient, e)
+	#t, k, d = extEuklid(totient, e)
 	
-	if d<0:
-		tmp = d
-		d = k
-		k = tmp
+	#if d < 0: d = k
 	
 	print "p", p, "q", q, "N", p*q, "Tot", totient, "e", e, "d", d, "k", k
 	
-	return [[p*q, e],[p*q, d]] #return [public key pair, private key pair]
-	
+	return [p*q, e], [p*q, d] #return [public key pair, private key pair]
+
+
 def ggt(a, b):
 	if a < b: a,b = b,a
 	while a%b != 0:
 		a,b = b,a%b
 	return b
-	
+
+
 def primelist(max):
 # copy from sieve.py, ex2
 	primes = list()
@@ -102,15 +104,51 @@ def primelist(max):
 		if not multiples[n]: primes.append(n)
 	
 	return primes
-	
+
+
 def bizout(a, b):
 	if b == 0:
 		return (1, 0)
-	q = a / b
+	q = a // b
 	r = a - q * b
 	x, y = bizout(b, r)
-	return (y, x - q * y)
+	return y, x - q * y
 
 
-def hack():
-	return 0
+def extEuklid(a,b):
+	if b == 0:
+		return (a, 1, 0)
+	d, s, t = extEuklid(b, a%b)
+	return d, t, s - a//b*t
+
+
+def hack(msg, pubkey):
+	r=1
+	while pow(msg, r, pubkey[0]) != 1:
+		r += 1
+		print r
+		
+	d = 1111 # something like = ( 1 + m*r ) //c
+	
+	return decrypt(msg, [pubkey[1], pubkey[0]*d])
+	
+
+# demo of rsa encr and decry
+msg = "h"
+msg_e = encode(msg)
+pubkey, prikey = gen_key(10,30)#msg_e)
+
+msg_s = encrypt(msg_e, pubkey)
+msg2_e = decrypt(msg_s, prikey)
+
+msg2 = decode(msg2_e)
+
+print msg_s, msg2_e
+print msg, msg2
+
+# hack a msg
+print decode(hack(msg_s, pubkey))
+
+#b_pub = [1024384027, 910510237]
+#msg = 100156265
+#print decode(hack(msg, b_pub))
