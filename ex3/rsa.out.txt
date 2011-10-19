@@ -1,0 +1,134 @@
+
+---------------------------------------------------------------------
+ Key Generator:
+---------------------------------------------------------------------
+p: 1613 q: 1153 N: 1859789 Totient: 1857024 e: 293 d: 557741 k: -88
+
+
+
+---------------------------------------------------------------------
+Results of the Simple Demonstration:
+---------------------------------------------------------------------
+public key     : [1859789, 293]
+private key    : [1859789, 557741]
+bruteforced key: [1859789, 93485]
+---------------------------------------------------------------------
+original message   : abc
+secure message     : 357253
+decrypted message  : 3137
+decoded message    : abc
+bruteforced message: abc 
+
+
+
+---------------------------------------------------------------------
+Starting MultiCore Bruteforce attak
+---------------------------------------------------------------------
+
+                             ...creating 7 workers
+
+Searching for r...
+   ... in range:  [2, 20002]
+   ... in range:  [20002, 40002]
+   ... in range:  [40002, 60002]
+   ... in range:  [60002, 80002]
+   ... in range:  [80002, 100002]
+[ DELETED SOME LINES ]
+   ... in range:  [620002, 640002]
+   ... in range:  [640002, 660002]
+   ... in range:  [660002, 680002]
+   ... in range:  [680002, 700002]
+--> GOT IT: 464256
+
+cleaning up processes and queues...
+                                    ...done
+
+Searching for d'...
+   ... in range: [2, 10002]
+   ... in range: [10002, 20002]
+   ... in range: [20002, 30002]
+   ... in range: [30002, 40002]
+   ... in range: [40002, 50002]
+   ... in range: [50002, 60002]
+   ... in range: [60002, 70002]
+   ... in range: [70002, 80002]
+   ... in range: [80002, 90002]
+   ... in range: [90002, 100002]
+   ... in range: [100002, 110002]
+   ... in range: [110002, 120002]
+   ... in range: [120002, 130002]
+   ... in range: [130002, 140002]
+--> GOT IT: 93485 
+
+sending kill signal to processes....
+                                    ...done
+waiting for processes to shutdown....
+                                    ...done
+
+
+------------------------------------------------
+ Final Result: r: 464256 d': 93485
+ Bruteforced Private Key: [1859789, 93485]
+------------------------------------------------
+stats: spawned tasks: for r: 35 ; for d: 14
+       loop counter : for r: 13 ; for d: 2
+
+
+SECRET TEXT: abc 
+
+
+
+---------------------------------------------------------------------
+Starting MultiCore Bruteforce attak
+---------------------------------------------------------------------
+
+                             ...creating 7 workers
+
+Searching for r...
+   ... in range:  [2, 20002]
+   ... in range:  [20002, 40002]
+   ... in range:  [40002, 60002]
+   ... in range:  [60002, 80002]
+   ... in range:  [80002, 100002]
+   ... in range:  [100002, 120002]
+   ... in range:  [120002, 140002]
+[ DELETED SOME LINES ]
+   ... in range:  [256200002, 256220002]
+   ... in range:  [256220002, 256240002]
+   ... in range:  [256240002, 256260002]
+   ... in range:  [256260002, 256280002]
+   ... in range:  [256280002, 256300002]
+   ... in range:  [256300002, 256320002]
+   ... in range:  [256320002, 256340002]
+--> GOT IT: 256080004
+
+cleaning up processes and queues...
+                                    ...done
+
+Searching for d'...
+   ... in range: [2, 10002]
+   ... in range: [10002, 20002]
+   ... in range: [20002, 30002]
+   ... in range: [30002, 40002]
+   ... in range: [40002, 50002]
+   ... in range: [50002, 60002]
+   ... in range: [60002, 70002]
+--> GOT IT: 32005 
+
+sending kill signal to processes....
+                                    ...done
+waiting for processes to shutdown....
+                                    ...done
+
+
+------------------------------------------------
+ Final Result: r: 256080004 d': 32005
+ Bruteforced Private Key: [1024384027, 32005]
+------------------------------------------------
+stats: spawned tasks: for r: 12817 ; for d: 7
+       loop counter : for r: 6929 ; for d: 1
+
+
+SECRET TEXT: eureka 
+
+

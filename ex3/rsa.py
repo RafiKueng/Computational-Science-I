@@ -125,9 +125,12 @@ def crack_mc(msg, pubkey):
 	tasks = multiprocessing.JoinableQueue()
 	results = multiprocessing.Queue()
 
-	# Start workers
-	num_workers = multiprocessing.cpu_count() - 1 # give one to the os...
-		#multiprocessing.cpu_count() * 2
+	# Start workers (maybe even more would be good? but they tend to totally lock my win machine...
+	if multiprocessing.cpu_count() == 1: # single processor machine
+		num_workers = 1
+	else:
+		num_workers = multiprocessing.cpu_count() - 1 # give one to the os...
+
 	print '\n---------------------------------------------------------------------'
 	print 'Starting MultiCore Bruteforce attak'
 	print '---------------------------------------------------------------------'
@@ -391,10 +394,3 @@ if __name__ == '__main__':
 	
 
 	
-
-
-
-#print '\n\nNow we try the excercise given...'
-#b_pub = [1024384027, 910510237]
-#msg = 100156265
-#print decode(hack(msg, b_pub))
