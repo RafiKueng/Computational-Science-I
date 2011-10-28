@@ -143,28 +143,28 @@ class poly(object):
             math: Pn(x) * Pm(x) -> python usage: (Pm*Pn)(x)
             maybe change this behavour later to return a new polynom...
         else: (assumed other is int or float!!)
-            return a LGP with element wise multiplied coefficients
+            return a poly with element wise multiplied coefficients
         """
         if isinstance(other, type(self)):
             return lambda x: self.eval(x) * other.eval(x)
         else:
-            return LGP(self.coef*other)
+            return poly(self.coef*other)
 
     def __div__(self, other): # /
         """
         If other is a polynom:
             do element wise div (same length is assumed, otherwise error)
         else if other is a int/float:
-            return a LGP with each coefficent div'ed by other
+            return a poly with each coefficent div'ed by other
         """
         if isinstance(other, type(self)):
             try:
-                return LGP(self.coef / other.coef)
+                return poly(self.coef / other.coef)
             except ValueError:
                 print 'You tried to element wise div two polys that don\'t have the same length!'
                 raise
         else:
-            return LGP(self.coef/float(other))
+            return poly(self.coef/float(other))
             
     def __isub__(self, other): # -=
         """
