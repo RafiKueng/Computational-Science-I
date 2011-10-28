@@ -222,6 +222,28 @@ class BoolIntegrator(BasicIntegrator):
         super(BoolIntegrator, self).__init__(4,5,boundaries, True, True, n_pieces)
 
 
+        
+        
+        
+        
+        
+class GaussChebishevQuadrature(object):
+    """
+    Integrates a function of the form f(cos(theta)) from 0 to pi
+    """
+    def __init__(self, M):
+        self.M = M #amount of evaluations
+        
+    def __call__(self, f):
+        sum=0
+        for k in range(self.M):
+            sum += f( np.cos( (k-0.5)*np.pi / self.M) )
+        return (np.pi/self.M*sum)
+        
+        
+        
+        
+        
 
 def main(*args):
     try:
