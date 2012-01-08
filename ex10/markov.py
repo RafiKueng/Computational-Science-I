@@ -115,7 +115,7 @@ class markov(object):
             if i>1000 and sp < sp_new:
                 break            
             
-            print 'i:%4.0f a:%5.2f, da:%5.2f, b:%5.2f, db:%5.2f, sp:%5.4f, sp_new:%5.4f' %(i, a, da, b, db, sp, sp_new)
+            #print 'i:%4.0f a:%5.2f, da:%5.2f, b:%5.2f, db:%5.2f, sp:%5.4f, sp_new:%5.4f' %(i, a, da, b, db, sp, sp_new)
             if rnd.random() < sp_new/sp:
                 a+=da
                 b+=db
