@@ -11,6 +11,10 @@ Explanation:
     the screen.mainloop(), but before. eventhandling (working on the event
     queue) only starts in the mainloop...
     
+    ODE's
+    X' = sigma*(Y - X)
+    Y' = r*X - Y - XZ
+    Z' = XY - b*Z
 
 How this code works:
     
@@ -81,9 +85,9 @@ class LorenzODE(object):
 
 def main():
     screen = Tk()
-    screen.overrideredirect(1)
-    wd= screen.winfo_screenwidth()
-    ht=screen.winfo_screenheight()
+    screen.overrideredirect(1) #dont draw the windowmanager stuff
+    wd = screen.winfo_screenwidth()
+    ht = screen.winfo_screenheight()
     screen.geometry("%dx%d+0+0"%(wd, ht))
     canv = Canvas(screen, height = ht, width = wd, background ="black")
     canv.focus_set() # <-- move focus to this widget
@@ -96,6 +100,7 @@ def main():
     
     rnd.seed(42) # so we are not really random... remove for real random pictrues :) but i wanted to be sure it looks good ;) 
     
+    #mainloop, never ends, draws all the time
     while True:
         init = array([rnd.uniform(-15, 15) for x in range(3)])
         t_end = rnd.randint(20,40) * 1.0
@@ -128,12 +133,12 @@ def main():
             canv.create_line(p0[0], p0[1], p[0], p[1], fill=["red","green","blue"][i])
         
         
-        
+        # mainloop for drawing one curve
         while not finished:
             newP, finished = lorenz.next_step()
             newSP = screenP((rotz*rotx*matrix(newP).T), wd, ht, zoom)
             #print oldSP, newSP
-            canv.create_line(oldSP[0], oldSP[1], newSP[0], newSP[1], fill=color) #0,1,200,300,fill='red')#
+            canv.create_line(oldSP[0], oldSP[1], newSP[0], newSP[1], fill=color)
             canv.update()
             
             oldSP = newSP
@@ -143,9 +148,8 @@ def main():
 
         
 def screenP(pnt, wd, ht, zoom):
-    pnt = pnt.T.getA()[0]
-   
-    
+    pnt = pnt.T.getA()[0] #get rid of nested lists, get a simple array
+    #zoom the already rotated result and put it in the middle of the screen
     return array([pnt[0]*zoom+wd//2, pnt[1]*zoom+ht//2], dtype=int)
     
 
