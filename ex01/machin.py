@@ -32,9 +32,7 @@ def machin():
     
     #get the atangenses
     atan5 = atan(atan5,5)
-    if debug_p: print 'arctan5', atan5[::-1]
     atan239 = atan(atan239,239)
-    if debug_p: print 'arctan239', atan239[::-1]
     
     # put them together
     mult(atan5,16)
@@ -119,7 +117,7 @@ def add1(sum,arr):
         if debug_a_il: print '	|		start	: arr', arr[i],'sum',sum[i],'c:', carry, 'b', base
         sum[i] = sum[i] + arr[i] + carry# 
         carry = sum[i] // base #
-        sum[i] = sum[i] - carry*base # 
+        sum[i] = sum[i] % base # 
         if debug_a_il: print '	|		end	: arr', arr[i],'sum',sum[i],'carry', carry,'b', base
     
     if debug_a: print '	|	\n	| end: sum',sum[::-1],'\n	|	arr',arr[::-1]
@@ -206,8 +204,8 @@ debug_s = False # print what sub does
 debug_s_il = False # print what sub does in inner loop
 debug_m = False # print what mult does
 debug_m_il = False # print what mult does in inner loop
-debug_d = False # print what div does
-debug_d_il = False # print what div does in inner loop
+debug_d = True # print what div does
+debug_d_il = True # print what div does in inner loop
 debug_t = False # print what tan does
 debug_p = False # print what main/machin does
 

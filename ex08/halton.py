@@ -57,10 +57,12 @@ def main():
     base1 = input()
     print 'input base 2:'
     base2 = input()
-    x = [halton(x,base1) for x in range(N)] 
-    y = [halton(x,base2) for x in range(N)]
-
-    pl.plot(x,y,'rx')
+    x1 = [halton(x,base1) for x in range(N)] 
+    y1 = [halton(x,base2) for x in range(N)]
+    
+    # x1 and y1 don't have the same length, why??
+    
+    pl.plot(x1[0:512],y1[0:512],'rx')
     pl.show()
     
     
