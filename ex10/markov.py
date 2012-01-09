@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 """
 -------------------------------------------------------------------------------
-Ex09: Hypothesis Testing using random Walk
+Ex10: Markov Chain Monte Carlo Methods - Metropolis Alorthym
 -------------------------------------------------------------------------------
 Explanation:
-
+    Bayesian Lighthouse Problem solved with Metropolis Algorythm
+    
+    
     
     
 How this code works:
@@ -69,7 +71,7 @@ class markov(object):
         p = 1
         for x in self.data_set:
             p *= self.prob(a,b,x)
-        print p
+        #print p
         return p
         
     def generate_sequence(self, n_num):
@@ -99,16 +101,18 @@ class markov(object):
         """
 
         
-        a = 1
-        b = 1
+        a = 0.6
+        b = 0.6
         pars = [[a,b]] #init a, b
+        p_a = [a]
+        p_b = [b]
         sp = self.set_prob(a,b)
         
         i = 0
         while True:
             i += 1    
             beta = rnd.random()*2*pi
-            da, db = (cos(beta), sin(beta))
+            da, db = (cos(beta)*0.1, sin(beta)*0.1)
             
             sp_new = self.set_prob(a+da,b+db)
 
@@ -120,10 +124,21 @@ class markov(object):
                 a+=da
                 b+=db
                 pars.append([a,b])
+                p_a.append(a)
+                p_b.append(b)
                 sp = sp_new
                 print ' >> ',pars[-1]
                 
-            
+        nbins = 100
+        pl.subplot(311)
+        pl.hist(self.data_set, nbins)
+        pl.subplot(312)
+        pl.hist(p_a, nbins)
+        pl.xlabel('real value: a=%.2f'%self.a)
+        pl.subplot(313)
+        pl.hist(p_b, nbins)
+        pl.xlabel('real value: b=%.2f'%self.b)
+        pl.show()
             
         
         
@@ -132,7 +147,7 @@ class markov(object):
 
 def main():
     m = markov(-.5, .7)
-    m.generate_sequence(100)
+    m.generate_sequence(200)
     m.recover()
    
     
