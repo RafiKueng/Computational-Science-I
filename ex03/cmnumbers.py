@@ -8,6 +8,13 @@
     refere to doc, p.XX
     
     
+    there exist non-prime numbers q for which:
+    pow(a, q-1, q) == 1
+    --> carmichael numbers
+    
+    
+    
+    
  Notes / Convention:
     One part uses multiple cores to try to crack the encryption
     basic idea for multicore implementation from this site:
@@ -214,7 +221,7 @@ def isprime(n):
         if n%(6*b-1)==0:
             return False
         if n %(6*b+1)==0:
-         return False
+            return False
     return True
 
 
