@@ -4,15 +4,35 @@
 Ex08: Schroedinger Equation
 -------------------------------------------------------------------------------
 Explanation:
+    1d sgl:
+    i * d phi / dt = -1/2 * d^2 phi / d x^2 + V(x) phi
+    
+    using fft:
+    phi~(k) = int _-inf ^inf [ exp(ikx) * phi(x) dx ]
 
+    one gets:
+    i * d phi~ / dt = -1/2 * k^2 * phi~ + int _-inf ^inf [ exp(ikx) * V * phi(x) dx ]
     
-    
+    Since time evo can be written as exp(-i*t*H), with H = A+B and
+    Baker-Campell-Hausdorff ident:
+        exp(1/2*t*i*A) exp(t*i*B) exp(1/2*t*i*A) = exp(t*i*H)
+
+    its basically done like this:
+        psi *= exp(1j*V*delta_t/2)
+        psi_k = fft(psi)
+        psi_k = concatenate(( psi_k[N/2:N], psi_k[0:N/2]))
+        psi_k *= exp(1j*K*K*delta_t)
+        psi_k = concatenate(( psi_k[N/2:N], psi_k[0:N/2]))
+        psi = ifft(psi_k)
+        psi *= exp(1j*V*delta_t/2)
+
+        
 How this code works:
-
-    
+   
 
 Notes / Convention:
-
+    i suppose there are still a few bug in here, strange resulat...
+ 
 
 
 -------------------------------------------------------------------------------
@@ -21,9 +41,10 @@ Notes / Convention:
 
 HISTORY:
     v1 2011-11-18   basic implementation
+    v2 2012-01-09   rewrite with help from solution
  
 BUGS / TODO:
-    doen't really work, theres somewhere a few bugs hidden...
+    still looks quite strange...
 
 
 LICENSE:
@@ -33,52 +54,56 @@ LICENSE:
 """
 
 from os import sys
-from numpy import array, pi, sqrt, exp, arange, abs
+from numpy import array, pi, sqrt, exp, arange, abs, concatenate
 from scipy.fftpack import fft,ifft
 import matplotlib as mp
 import pylab as pl
+import time
 
 
 
 class sgl(object):
-    def __init__(self, xAxisSetup, initFunc, k0_init, V, dt, t0):
+    def __init__(self, N, R, initFunc, V, dt, t0):
         """
-        xAxisSetup: [Xmin, Xmax, dx]
+        N: # of points on the x axis
+        R: length of the x axis
         """
         
-        self.V = V #potential function
         self.dt = dt
         self.t = t0
-        self.xMin, self.xMax, self.dx = xAxisSetup
-        self.x = arange(*xAxisSetup)
-        self.n = len(self.x)
+        
+        self.dx = 2.*R/N
+        self.x = (array(range(N)) - N/2)*self.dx
+        self.n = N
+        
+        self.k = 2*pi*(array(range(N))-N/2)/self.dx
+        
         self.phi_x = initFunc(self.x)
-        
-        self.dk = 2*pi /(self.n * self.dx)
-        self.k0 =  -0.5*self.n * self.dk
-        self.k = arange(self.n) * self.dk + self.k0
-        
-        self.phi_x = self.phi_x * exp(-1j * self.k[0] * self.x) * self.dx / sqrt(2*pi)
-        
-        self.convert_x_to_k()
+
+        self.V_fn = V #potential function
+        self.V = V(self.x)
         
                         
     def convert_x_to_k(self):
-        self.phi_k = fft(self.phi_x)
+        tmp = fft(self.phi_x)
+        self.phi_k = concatenate((tmp[self.n/2:self.n], tmp[0:self.n/2]))
 
     def convert_k_to_x(self):
-        self.phi_x = ifft(self.phi_k)    
+        self.phi_k = concatenate((self.phi_k[self.n/2:self.n], self.phi_k[0:self.n/2]))
+        self.phi_x = ifft(self.phi_k)
         
     def calc_step(self):
     
-        # phi(x, t+dt) = phi(x,t) * exp(-iV(x)dt/h_bar)
-        self.phi_x = self.phi_x * exp(-1j*self.V(self.x)*self.dt)
+        # phi(x, t+dt) = phi(x,t) * exp(-iV(x)dt/h_bar/2)
+        self.phi_x = self.phi_x * exp(-1j*self.V*self.dt/2)
         self.convert_x_to_k()
         
         #phitilde(k, t+dt) = phitilde(k, t) * exp(  -i h_bar k k dt / 2m )
-        self.phi_k = self.phi_k * exp(-1j*self.k*self.k*self.dt/2.)
+        self.phi_k = self.phi_k * exp(1j*self.k*self.k*self.dt)
         self.convert_k_to_x()
 
+        self.phi_x = self.phi_x * exp(-1j*self.V*self.dt/2)
+                
         self.t += self.dt
 
         
@@ -87,7 +112,7 @@ class sgl(object):
     
         pl.figure()
         self.linehandle_psi_x = pl.plot(self.x, abs(self.phi_x))[0]
-        pl.plot(self.x, self.V(self.x))
+        pl.plot(self.x, self.V)
         ymin = min(abs(self.phi_x))
         ymax = max(abs(self.phi_x))
         pl.ylim( ymin-0.2*(ymax-ymin),ymax+0.2*(ymax-ymin) )
@@ -119,22 +144,27 @@ def step(limit=0):
 def barrier(width=0.1, height = 1, loc = 0):
     """creates a barrier at (around) x = loc, of height and witdh"""
     return lambda x: height*( step(-width/2.0)(x-loc) * 1-step(width/2.0)(x-loc))
+
+    
+    
     
 def main():
 
     pl.ion()
     
-    #V = lambda x: 0.5*abs(x-1)**2
+    N = 2**10
+    R = 50
+    #initFunc = gauss(4,-50,-100.0)
+    initFunc = lambda x: exp(-0.5*(x-1)**2/2.) +0j
+    #V = barrier(10,1000000,0)
+    V = lambda x: 0.5*abs(x-1.0)**2
     
-    xAxisSetup = [-100, 100, 0.01]
-    initFunc = gauss(4,-50,10.0)
-    k0_init = 10.
-    V = barrier(5,10,0)
-    dt = 0.05
+    dt = 0.0000005
     t0 = 0
-    t_max = 10.
+    t_max = .0001
     
-    sgl1 = sgl(xAxisSetup, initFunc, k0_init, V, dt, t0)
+    
+    sgl1 = sgl(N, R, initFunc, V, dt, t0)
     sgl1.paint()
     
     while sgl1.t < t_max:
@@ -150,7 +180,6 @@ def main():
 def cmdmain(*args):
     try:
         main()
-        
     except:
         raise
         # handle some exceptions
