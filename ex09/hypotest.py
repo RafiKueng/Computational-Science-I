@@ -4,7 +4,9 @@
 Ex09: Hypothesis Testing using random Walk
 -------------------------------------------------------------------------------
 Explanation:
-
+    - standart random walk with constraint to return to origin
+    - max dist away from origin per try
+    - plotting the summed up probabilities, resp inprobabiilty
     
     
 How this code works:
@@ -109,13 +111,18 @@ class hypothesistesting(object):
                 
         y_axis = array(y_axis)/(self.n_tries*1.)
         pl.plot(x_axis, y_axis, drawstyle='steps-post')
+        pl.xlim(-0.05, +1.05)
+        pl.ylim(-0.1, +1.1)
+        pl.title('Kolmogorov-Smirnov Statistic')
+        pl.xlabel('Max. fractional difference')
+        pl.ylabel('Improbability')
 
         #theoretical curve
         x2 = linspace(0,1,1000)
         y2 = zeros(1000)
         v=sqrt(self.N1*self.N2 / (1.*self.N1+self.N2))
         mu = v + 0.12 + 0.11/v
-        for k in range(100):
+        for k in range(1000):
             y2 += (-1)**k*exp(-2*(k+1)**2*mu**2*x2**2)
         y2 = 1-2*y2 
         pl.plot(x2,y2, 'r:')
@@ -162,13 +169,11 @@ def main():
     N1 = 24
     N2 = 36
     n_tries = 10000
-    n_bins = 100
-
+    
     # hypothesis testing
 
-    rndwk1 = hypothesistesting(N1, N2, n_tries, n_bins)
+    rndwk1 = hypothesistesting(N1, N2, n_tries)
     rndwk1()
-    
     
     
 def cmdmain(*args):
